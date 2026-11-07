@@ -1,0 +1,64 @@
+@startuml
+set namespaceSeparator ::
+
+class "pontis::src::mvc::model_event.dart::ModelEvent" {
+  +AbstractModel? source
+  +int id
+  +String message
+  +int amount
+}
+
+"pontis::src::mvc::model_event.dart::ModelEvent" o-- "pontis::src::mvc::abstract_model.dart::AbstractModel"
+
+class "pontis::src::mvc::model_listener.dart::ModelListener" {
+  +void modelChanged()
+}
+
+class "pontis::src::mvc::model.dart::Model" {
+  +void addModelListener()
+  +void removeModelListener()
+  +void notifyChanged()
+}
+
+abstract class "pontis::src::mvc::abstract_model.dart::AbstractModel" {
+  -List<ModelListener> _listeners
+  +void addModelListener()
+  +void removeModelListener()
+  +void notifyChanged()
+}
+
+"pontis::src::mvc::model.dart::Model" <|-- "pontis::src::mvc::abstract_model.dart::AbstractModel"
+
+class "pontis::src::mvc::view.dart::View" {
+  +void setController()
+  +Controller getController()
+  +void setModel()
+  +Model getModel()
+}
+
+"pontis::src::mvc::model_listener.dart::ModelListener" <|-- "pontis::src::mvc::view.dart::View"
+
+class "pontis::src::mvc::controller.dart::Controller" {
+  +void setModel()
+  +Model getModel()
+  +void setView()
+  +View getView()
+  +void operation()
+}
+
+abstract class "pontis::src::mvc::abstract_controller.dart::AbstractController" {
+  -Model _model
+  -View _view
+  +void setModel()
+  +Model getModel()
+  +void setView()
+  +View getView()
+  +void operation()
+}
+
+"pontis::src::mvc::abstract_controller.dart::AbstractController" o-- "pontis::src::mvc::model.dart::Model"
+"pontis::src::mvc::abstract_controller.dart::AbstractController" o-- "pontis::src::mvc::view.dart::View"
+"pontis::src::mvc::controller.dart::Controller" <|-- "pontis::src::mvc::abstract_controller.dart::AbstractController"
+
+
+@enduml
