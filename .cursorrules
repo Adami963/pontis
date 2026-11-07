@@ -1,0 +1,53 @@
+# Pontis Cursor Agent Rules & Invariants
+
+You are an expert software-engineering partner assisting a 3-student team building Pontis, a Flutter travel language-learning app. You must strictly abide by these rules.
+
+## 1. AUTHORITY & SPECIFICATION HIERARCHY
+1. The SRS (`docs/srs/SRS_Project_Description.md`) is authoritative over all design and implementation.
+2. Never invent, extrapolate, or alter functional requirements, performance targets, or component boundaries.
+3. Every test and major class declaration must cite its exact SRS requirement ID (e.g., `[SRS-3.2.1-FSRS]`).
+4. If an instruction or prompt conflicts with the SRS, STOP and emit an explicit escalation notice.
+
+## 2. ARCHITECTURAL & SECURITY INVARIANTS
+1. **MVC Architecture:**
+   - Model package (`lib/src/model/`) must NEVER import, depend on, or reference View (`lib/src/view/`) or Controller (`lib/src/controller/`).
+   - Models extend `AbstractModel` and communicate state changes strictly through `ModelListener` and `ModelEvent`.
+2. **Azure Speech Key Security (SRS §3.5.1, §4.4):**
+   - Azure Speech Pronunciation Assessment credentials must NEVER be placed in client-side Flutter code.
+   - All assessment requests must route via the Supabase Edge Function proxy. Any client-side key exposure fails verification immediately.
+3. **Speech Engine Modularity (SRS §3.5.1, §4.4):**
+   - On-device speech recognition (Vosk) must sit behind the abstract `SpeechRecognitionEngine` interface. UI and exercises must depend only on the interface.
+4. **FSRS Scheduling Purity (SRS §3.2.1):**
+   - FSRS algorithm calculations must be pure functions with deterministic inputs and outputs (no hidden system clocks or unseeded randomness).
+
+## 3. THE 13-STEP COURSE PROCESS ORDER
+You must follow this lifecycle sequentially. Skipping steps is prohibited:
+1. UML Class Diagram (MVC packages, interfaces, stubs, exceptions).
+2. Generate skeleton from UML (Model first, then Controller, then View).
+3. Add declarations and Dartdoc (`///`), throwing `UnimplementedError()`.
+4. Compile after every increment (`flutter analyze`).
+5. Generate initial API docs (`dart doc`).
+6. Reverse-engineer UML from declarations (`dcdg`).
+7. Compare UML/code/docs and iterate until team approval.
+8. Write unit tests before implementations (RED phase).
+9. Complete and test the entire Model package without Controller/View.
+10. Implement Controller and View incrementally.
+11. Run acceptance tests and fix faults.
+12. Generate final reverse-engineered UML.
+13. Produce final documentation.
+
+## 4. AGENTIC TDD RULES (RED vs. GREEN SESSIONS)
+1. **RED Session:**
+   - Input: Verbatim SRS excerpt + Contract file.
+   - Output: Failing unit tests in `test/` citing requirement IDs.
+   - Success criterion: Tests fail on `UnimplementedError()` stubs.
+2. **GREEN Session:**
+   - Input: Frozen failing tests + Contract file.
+   - Output: Minimal implementation code to pass tests.
+   - STRICT PROHIBITION: The GREEN agent MUST NEVER modify, weaken, skip, or delete any test in `test/`. Any attempt to edit a frozen test triggers an immediate build failure.
+
+## 5. PROMPT PACKET EXECUTION FORMAT
+Every prompt packet must follow the sandwich structure:
+- TOP: `### CRITICAL INSTRUCTIONS ###` with boundary limits.
+- MIDDLE: Verbatim requirement text and target file paths.
+- BOTTOM: Verification commands (`./scripts/run_verify.sh`) and Definition of Done.
